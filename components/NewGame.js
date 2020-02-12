@@ -82,6 +82,7 @@ function NewGame() {
           }}
         >
           <StyledFieldset disabled={loading} aria-busy={loading}>
+            <h1>Test</h1>
             <Error error={error} />
             <label htmlFor="name">Name:</label>
             <input
