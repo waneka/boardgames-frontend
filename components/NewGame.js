@@ -77,14 +77,8 @@ function NewGame() {
           onSubmit={async e => {
             e.preventDefault();
             if (disableForm) return;
-            console.log("data :", {
-              name,
-              radioMilestone,
-              cfoMilestone,
-              players
-            });
-            const res = await createGame();
-            console.log("res :", res);
+
+            await createGame();
           }}
         >
           <StyledFieldset disabled={loading} aria-busy={loading}>
@@ -122,6 +116,7 @@ function NewGame() {
             {players.map((player, index) => {
               return (
                 <PlayerSearch
+                  key={`player-${index}`}
                   player={player}
                   handlePlayerUpdate={handlePlayerUpdate}
                   players={players}
