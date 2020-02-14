@@ -1,9 +1,10 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const NavStyles = styled.ul`
   margin: 0;
   padding: 0;
   display: flex;
+  align-items: center;
   justify-self: end;
   font-size: 2rem;
   a,
@@ -23,7 +24,7 @@ const NavStyles = styled.ul`
       padding: 0 10px;
     }
     &:before {
-      content: '';
+      content: "";
       width: 2px;
       background: ${props => props.theme.lightgrey};
       height: 100%;
@@ -36,7 +37,7 @@ const NavStyles = styled.ul`
     &:after {
       height: 2px;
       background: red;
-      content: '';
+      content: "";
       width: 0;
       position: absolute;
       transform: translateX(-50%);
@@ -51,9 +52,9 @@ const NavStyles = styled.ul`
       &:after {
         width: calc(100% - 60px);
       }
-    @media (max-width: 700px) {
+      @media (max-width: 700px) {
         width: calc(100% - 10px);
-    }
+      }
     }
   }
   @media (max-width: 1300px) {

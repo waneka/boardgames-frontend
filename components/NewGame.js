@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
 import styled from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+
 import Error from "./ErrorMessage";
 import PlayerSearch from "./PlayerSearch";
+import Button from "./styles/Button";
 
 const CREATE_GAME_MUTATION = gql`
   mutation CREATE_GAME_MUTATION(
@@ -31,9 +35,37 @@ const StyledFieldset = styled.fieldset`
 const StyledForm = styled.form`
   margin: auto;
   max-width: 500px;
-  input {
+  fieldset {
+    border: 1px solid ${props => props.theme.darkGrey};
+    border-radius: 5px;
+    padding: 12px;
+  }
+  input[type="text"] {
     border-radius: 0;
+    border: 1px solid ${props => props.theme.grey};
+    padding: 5px;
     font-size: 1.5rem;
+    width: 100%;
+  }
+  .playerBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+`;
+
+const HR = styled.div`
+  width: 100%;
+  border-top: 1px solid ${props => props.theme.grey};
+  margin: 10px 0;
+`;
+
+const ActionBar = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+  button {
+    font-size: 2rem;
   }
 `;
 
@@ -88,10 +120,11 @@ function NewGame() {
               type="text"
               id="name"
               name="name"
-              placeholder="Name of the game"
+              placeholder="Game name"
               value={name}
               onChange={e => setName(e.target.value)}
             />
+            <HR />
             <label htmlFor="radioMilestone">
               Radio Milestone:
               <input
@@ -112,7 +145,24 @@ function NewGame() {
                 onChange={() => setCfoMilestone(!cfoMilestone)}
               />
             </label>
-            <div className="">Players:</div>
+            <HR />
+            <div className="playerBar">
+              <div>Players:</div>
+              <Button
+                className="addPlayer"
+                type="button"
+                size="compact"
+                variant="openPrimary"
+                disabled={players.length >= 5}
+                onClick={() => {
+                  if (players.length >= 5) return;
+                  addOrRemovePlayer(players.length + 1);
+                }}
+              >
+                <FontAwesomeIcon icon={faUserPlus} />
+                <div className="pl">Add Player</div>
+              </Button>
+            </div>
             {players.map((player, index) => {
               return (
                 <PlayerSearch
@@ -126,22 +176,17 @@ function NewGame() {
                 />
               );
             })}
-            <div>
-              <button
-                className="addPlayer"
-                type="button"
-                disabled={players.length >= 5}
-                onClick={() => {
-                  if (players.length >= 5) return;
-                  addOrRemovePlayer(players.length + 1);
-                }}
+            <HR />
+            <ActionBar>
+              <Button
+                className="signPainter"
+                type="submit"
+                variant="primary"
+                disabled={disableForm}
               >
-                + Add Player
-              </button>
-            </div>
-            <button type="submit" disabled={disableForm}>
-              Create Game
-            </button>
+                Create Game
+              </Button>
+            </ActionBar>
           </StyledFieldset>
         </StyledForm>
       )}
