@@ -27,6 +27,7 @@ const Nav = styled.div`
   grid-template-columns: 1fr 1fr 1fr 1fr;
   background-color: ${props => props.theme.black};
   text-align: center;
+  align-items: center;
   .user,
   .signout,
   a {
