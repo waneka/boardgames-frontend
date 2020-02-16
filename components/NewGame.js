@@ -3,11 +3,13 @@ import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { faUserPlus, faTrophy } from "@fortawesome/free-solid-svg-icons";
 
 import Error from "./ErrorMessage";
 import PlayerSearch from "./PlayerSearch";
 import Button from "./styles/Button";
+import Checkbox from "./styles/Checkbox";
+import InputWithIcon from "./styles/InputWithIcon";
 
 const CREATE_GAME_MUTATION = gql`
   mutation CREATE_GAME_MUTATION(
@@ -56,7 +58,7 @@ const StyledForm = styled.form`
 
 const HR = styled.div`
   width: 100%;
-  border-top: 1px solid ${props => props.theme.grey};
+  border-top: 1px solid ${props => props.theme.darkGrey};
   margin: 10px 0;
 `;
 
@@ -116,35 +118,29 @@ function NewGame() {
           <StyledFieldset disabled={loading} aria-busy={loading}>
             <Error error={error} />
             <label htmlFor="name">Name:</label>
-            <input
-              type="text"
+            <InputWithIcon
               id="name"
               name="name"
               placeholder="Game name"
               value={name}
               onChange={e => setName(e.target.value)}
+              icon={faTrophy}
             />
             <HR />
-            <label htmlFor="radioMilestone">
-              Radio Milestone:
-              <input
-                type="checkbox"
-                id="radioMilestone"
-                name="radioMilestone"
-                checked={radioMilestone}
-                onChange={() => setRadioMilestone(!radioMilestone)}
-              />
-            </label>
-            <label htmlFor="cfoMilestone">
-              CFO Milestone:
-              <input
-                type="checkbox"
-                id="cfoMilestone"
-                name="cfoMilestone"
-                checked={cfoMilestone}
-                onChange={() => setCfoMilestone(!cfoMilestone)}
-              />
-            </label>
+            <Checkbox
+              id="radioMilestone"
+              name="radioMilestone"
+              checked={radioMilestone}
+              onChange={() => setRadioMilestone(!radioMilestone)}
+              label="Radio Milestone"
+            />
+            <Checkbox
+              id="cfoMilestone"
+              name="cfoMilestone"
+              checked={cfoMilestone}
+              onChange={() => setCfoMilestone(!cfoMilestone)}
+              label="CFO Milestone"
+            />
             <HR />
             <div className="playerBar">
               <div>Players:</div>

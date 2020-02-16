@@ -26,7 +26,7 @@ const Input = styled.input`
 function InputWithIcon({ icon, ...props }) {
   return (
     <InputWrapper>
-      <Input {...props} />
+      <Input {...props} type="text" />
       <FontAwesomeIcon icon={icon} className="icon" />
     </InputWrapper>
   );
