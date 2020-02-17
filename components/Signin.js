@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import { useRouter } from "next/router";
 import Error from "./ErrorMessage";
 import { CURRENT_USER_QUERY } from "./User";
 
@@ -120,6 +121,7 @@ const StyledForm = styled.form`
 `;
 
 function Signin({ setAuthFlow }) {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -137,10 +139,13 @@ function Signin({ setAuthFlow }) {
             e.preventDefault();
 
             if (!email || !password) return;
-            await signup();
+            const res = await signup();
             setUsername("");
             setEmail("");
             setPassword("");
+            if (res.data.signin.id) {
+              router.push("/");
+            }
           }}
         >
           <StyledFieldset disabled={loading} aria-busy={loading}>

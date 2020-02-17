@@ -1,9 +1,10 @@
 import Games from "../components/Games";
+import UserAuthCheck from "../components/UserAuthCheck";
 
 const Home = props => (
-  <div>
+  <UserAuthCheck>
     <Games />
-  </div>
+  </UserAuthCheck>
 );
 
 export default Home;

@@ -1,5 +1,9 @@
+import UserAuthCheck from "../components/UserAuthCheck";
+
 const Account = props => (
-    <div>User Account</div>
+  <UserAuthCheck>
+    <div>Account Page</div>
+  </UserAuthCheck>
 );
 
 export default Account;
