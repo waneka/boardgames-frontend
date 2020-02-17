@@ -5,29 +5,52 @@ import Link from "next/link";
 
 const StyledGame = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: 1.2fr 2fr 0.5fr 0.8fr 1fr;
   align-items: center;
+  grid-gap: 5px;
+  margin-top: 5px;
+  .cell {
+    border: 1px solid black;
+    align-self: stretch;
+    padding: 5px;
+    background-color: white;
+  }
+  .players {
+    display: flex;
+    flex-wrap: wrap;
+    .player {
+      margin-right: 10px;
+    }
+  }
 `;
 
 const Game = ({ game }) => {
-  const {
-    name,
-    id,
-    radioMilestone,
-    cfoMilestone,
-    currentTurn,
-    currentPhase
-  } = game;
+  const { name, id, currentTurn, currentPhase, players, updatedAt } = game;
+
+  const date = new Date(updatedAt);
 
   return (
     <StyledGame>
-      <Link href="/games/[game]" as={`/games/${id}`}>
-        <a>name: {name}</a>
-      </Link>
-      <div>radio milestone: {`${radioMilestone}`}</div>
-      <div>cfo milestone: {`${cfoMilestone}`}</div>
-      <div>current turn: {currentTurn}</div>
-      <div>current phase: {currentPhase}</div>
+      <div className="cell">
+        <Link href="/games/[game]" as={`/games/${id}`}>
+          <a>{name}</a>
+        </Link>
+      </div>
+      <div className="players cell">
+        {players.map(player => (
+          <div key={player.id} className="player">
+            {player.username}
+          </div>
+        ))}
+      </div>
+      <div className="cell">{currentTurn}</div>
+      <div className="cell">{currentPhase}</div>
+      <div className="cell">
+        {date.toLocaleDateString(undefined, {
+          dateStyle: "medium",
+          timeStyle: "short"
+        })}
+      </div>
     </StyledGame>
   );
 };
