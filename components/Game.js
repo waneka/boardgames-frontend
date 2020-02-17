@@ -12,14 +12,18 @@ const StyledGame = styled.div`
 const Game = ({ game }) => {
   const {
     name,
+    id,
     radioMilestone,
     cfoMilestone,
     currentTurn,
     currentPhase
   } = game;
+
   return (
     <StyledGame>
-      <div>name: {name}</div>
+      <Link href="/games/[game]" as={`/games/${id}`}>
+        <a>name: {name}</a>
+      </Link>
       <div>radio milestone: {`${radioMilestone}`}</div>
       <div>cfo milestone: {`${cfoMilestone}`}</div>
       <div>current turn: {currentTurn}</div>

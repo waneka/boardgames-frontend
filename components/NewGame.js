@@ -77,10 +77,7 @@ function NewGame() {
   const [name, setName] = useState("");
   const [radioMilestone, setRadioMilestone] = useState(true);
   const [cfoMilestone, setCfoMilestone] = useState(true);
-  const [players, setPlayers] = useState([
-    { ...blankPlayer },
-    { ...blankPlayer }
-  ]);
+  const [players, setPlayers] = useState([{ ...blankPlayer }]);
 
   const addOrRemovePlayer = index => {
     if (index > players.length) {
@@ -149,9 +146,9 @@ function NewGame() {
                 type="button"
                 size="compact"
                 variant="openPrimary"
-                disabled={players.length >= 5}
+                disabled={players.length >= 4}
                 onClick={() => {
-                  if (players.length >= 5) return;
+                  if (players.length >= 4) return;
                   addOrRemovePlayer(players.length + 1);
                 }}
               >
@@ -166,7 +163,7 @@ function NewGame() {
                   player={player}
                   handlePlayerUpdate={handlePlayerUpdate}
                   players={players}
-                  showRemove={index >= 2}
+                  showRemove={index >= 1}
                   handleRemovePlayer={addOrRemovePlayer}
                   index={index}
                 />

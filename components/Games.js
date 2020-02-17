@@ -13,6 +13,10 @@ const ALL_GAMES_QUERY = gql`
       cfoMilestone
       currentTurn
       currentPhase
+      players {
+        username
+        id
+      }
     }
   }
 `;
