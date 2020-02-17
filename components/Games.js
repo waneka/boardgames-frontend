@@ -28,32 +28,21 @@ const GamesList = styled.div`
   margin: auto;
 `;
 
-class Games extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
+const Games = () => (
+    <Query query={ALL_GAMES_QUERY}>
+      {({ data, error, loading }) => {
+        if (loading) return <p>Loading...</p>;
+        if (error) return <p>Error: {error.message}</p>;
 
-  render() {
-    return (
-      <div>
-        <Query query={ALL_GAMES_QUERY}>
-          {({ data, error, loading }) => {
-            if (loading) return <p>Loading...</p>;
-            if (error) return <p>Error: {error.message}</p>;
-
-            return (
-              <GamesList>
-                {data.games.map(game => (
-                  <Game game={game} key={game.id} />
-                ))}
-              </GamesList>
-            );
-          }}
-        </Query>
-      </div>
-    );
-  }
-}
+        return (
+          <GamesList>
+            {data.games.map(game => (
+              <Game game={game} key={game.id} />
+            ))}
+          </GamesList>
+        );
+      }}
+    </Query>
+);
 
 export default Games;

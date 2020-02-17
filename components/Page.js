@@ -65,10 +65,6 @@ const GlobalStyle = createGlobalStyle`
   .signPainter {
     font-family: 'sign_painter';
   }
-  a {
-    color: ${theme.black};
-    text-decoration: none;
-  }
 `;
 
 const Page = props => (
