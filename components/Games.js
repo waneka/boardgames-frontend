@@ -26,7 +26,8 @@ const GamesList = styled.div`
   display: flex;
   flex-direction: column;
   max-width: ${props => props.theme.maxWidth};
-  background-color: ${props => props.theme.grey};
+  background-color: ${props => props.theme.offWhite};
+  border: 1px solid ${props => props.theme.black};
   padding: 0 5px 5px 5px;
   margin: auto;
 `;

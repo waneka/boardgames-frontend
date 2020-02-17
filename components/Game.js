@@ -10,7 +10,7 @@ const StyledGame = styled.div`
   grid-gap: 5px;
   margin-top: 5px;
   .cell {
-    border: 1px solid black;
+    border: 1px solid ${props => props.theme.darkGrey};
     align-self: stretch;
     padding: 5px;
     background-color: white;
