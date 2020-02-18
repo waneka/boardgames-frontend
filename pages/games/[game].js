@@ -1,5 +1,4 @@
 import React from "react";
-import { Query, Mutation } from "react-apollo";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import Error from "../../components/ErrorMessage";

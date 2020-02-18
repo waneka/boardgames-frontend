@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Mutation } from "react-apollo";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
