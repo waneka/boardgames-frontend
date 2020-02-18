@@ -1,7 +1,24 @@
 import React from "react";
 import { Query, Mutation } from "react-apollo";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import Error from "../../components/ErrorMessage";
+
+// const GAME_EVENTS_SUBSCRIPTION = gql`
+//   subscription GAME_EVENTS_SUBSCRIPTION($gameId: ID!) {
+//     gameEvent(gameId: $gameId) {
+//       node {
+//         type
+//         game {
+//           id
+//           name
+//         }
+//       }
+//       mutation
+//       updatedFields
+//     }
+//   }
+// `;
 
 const CREATE_GAME_EVENT_MUTATION = gql`
   mutation CREATE_GAME_EVENT_MUTATION($gameId: ID!, $type: GameEventType!) {
@@ -28,37 +45,40 @@ const CURRENT_GAME_QUERY = gql`
 `;
 
 function Game({ query: { game } }) {
-  console.log("game :", game);
-  return (
-    <Query query={CURRENT_GAME_QUERY} variables={{ id: game }}>
-      {({ data, error, loading }) => {
-        if (loading) return <div>Loading...</div>;
-        if (error) return <Error error={error} />;
-        console.log("data.game :", data.game);
+  // const { data, loading } = useSubscription(GAME_EVENTS_SUBSCRIPTION, {
+  //   variables: { gameId: game }
+  // });
+  // console.log("game :", game);
+  // console.log("data", data);
+  // console.log("loading", loading);
+  const { data, error, loading } = useQuery(CURRENT_GAME_QUERY, {
+    variables: { id: game }
+  });
+  if (loading) return <div>Loading...</div>;
+  if (error) return <Error error={error} />;
 
-        return (
-          <div>
-            Game: {data.game.name}
-            <Mutation
-              mutation={CREATE_GAME_EVENT_MUTATION}
-              variables={{
-                gameId: data.game.id,
-                type: "CREATE_BOARD"
-              }}
-            >
-              {(createGameEvent, { error, loading, data }) => {
-                console.log("data :", data);
-                return (
-                  <button className="" onClick={() => createGameEvent()}>
-                    Click
-                  </button>
-                );
-              }}
-            </Mutation>
-          </div>
-        );
-      }}
-    </Query>
+  const [createGameEvent, gameEventData] = useMutation(
+    CREATE_GAME_EVENT_MUTATION
+  );
+  console.log("gameEventData :", gameEventData);
+
+  return (
+    <div>
+      Game: {data.game.name}
+      <button
+        className=""
+        onClick={() =>
+          createGameEvent({
+            variables: {
+              gameId: data.game.id,
+              type: "TRASH_FOOD"
+            }
+          })
+        }
+      >
+        Click
+      </button>
+    </div>
   );
 }
 

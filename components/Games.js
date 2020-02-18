@@ -1,5 +1,6 @@
 import React from "react";
 import { Query } from "react-apollo";
+import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 import Game from "./Game";
@@ -39,41 +40,38 @@ const GameListHeader = styled.div`
   margin-top: 20px;
 `;
 
-const Games = () => (
-  <Query query={ALL_GAMES_QUERY}>
-    {({ data, error, loading }) => {
-      if (loading) return <p>Loading...</p>;
-      if (error) return <p>Error: {error.message}</p>;
+const Games = () => {
+  const { data, error, loading } = useQuery(ALL_GAMES_QUERY);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
-      return (
-        <>
-          <h1>Active Games</h1>
-          <GameListHeader>
-            <div>
-              <strong>Name</strong>
-            </div>
-            <div>
-              <strong>Players</strong>
-            </div>
-            <div>
-              <strong>Current Turn</strong>
-            </div>
-            <div>
-              <strong>Current Phase</strong>
-            </div>
-            <div>
-              <strong>Last Activity</strong>
-            </div>
-          </GameListHeader>
-          <GamesList>
-            {data.games.map(game => (
-              <Game game={game} key={game.id} />
-            ))}
-          </GamesList>
-        </>
-      );
-    }}
-  </Query>
-);
+  return (
+    <>
+      <h1>Active Games</h1>
+      <GameListHeader>
+        <div>
+          <strong>Name</strong>
+        </div>
+        <div>
+          <strong>Players</strong>
+        </div>
+        <div>
+          <strong>Current Turn</strong>
+        </div>
+        <div>
+          <strong>Current Phase</strong>
+        </div>
+        <div>
+          <strong>Last Activity</strong>
+        </div>
+      </GameListHeader>
+      <GamesList>
+        {data.games.map(game => (
+          <Game game={game} key={game.id} />
+        ))}
+      </GamesList>
+    </>
+  );
+};
 
 export default Games;

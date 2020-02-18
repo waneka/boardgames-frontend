@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Mutation } from "react-apollo";
+import { useMutation } from "@apollo/react-hooks";
 import Link from "next/link";
 import gql from "graphql-tag";
 import styled from "styled-components";
@@ -113,56 +113,52 @@ const StyledForm = styled.form`
 
 function Reset({ resetToken }) {
   const [password, setPassword] = useState("");
+  const [reset, { error, loading }] = useMutation(RESET_MUTATION);
 
   return (
-    <Mutation
-      mutation={RESET_MUTATION}
-      variables={{
-        resetToken,
-        password
+    <StyledForm
+      method="post"
+      onSubmit={async e => {
+        e.preventDefault();
+
+        if (!password) return;
+        await reset({
+          variables: {
+            resetToken,
+            password
+          },
+          refetchQueries: [{ query: CURRENT_USER_QUERY }]
+        });
+        setPassword("");
       }}
-      refetchQueries={[{ query: CURRENT_USER_QUERY }]}
     >
-      {(reset, { error, loading, called }) => (
-        <StyledForm
-          method="post"
-          onSubmit={async e => {
-            e.preventDefault();
+      <StyledFieldset disabled={loading} aria-busy={loading}>
+        <Error error={error} />
+        <div className="signupTitle">Reset your password</div>
+        <div className="inputWrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder=""
+            className={password ? "hasContent" : ""}
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
+          <label htmlFor="password">Password</label>
+        </div>
 
-            if (!password) return;
-            await reset();
-            setPassword("");
-          }}
-        >
-          <StyledFieldset disabled={loading} aria-busy={loading}>
-            <Error error={error} />
-            <div className="signupTitle">Reset your password</div>
-            <div className="inputWrapper">
-              <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder=""
-                className={password ? "hasContent" : ""}
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-              <label htmlFor="password">Password</label>
-            </div>
-
-            <div className="buttonWrapper">
-              <button type="submit">Reset Password</button>
-            </div>
-            <div className="horLine"></div>
-            <div className="signinToggle">
-              <Link href="/signin">
-                <a>Back to Sign In</a>
-              </Link>
-            </div>
-          </StyledFieldset>
-        </StyledForm>
-      )}
-    </Mutation>
+        <div className="buttonWrapper">
+          <button type="submit">Reset Password</button>
+        </div>
+        <div className="horLine"></div>
+        <div className="signinToggle">
+          <Link href="/signin">
+            <a>Back to Sign In</a>
+          </Link>
+        </div>
+      </StyledFieldset>
+    </StyledForm>
   );
 }
 

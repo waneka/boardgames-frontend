@@ -1,20 +1,16 @@
 import React from "react";
-import { Query } from "react-apollo";
+import { useQuery } from "@apollo/react-hooks";
 import { CURRENT_USER_QUERY } from "./User";
 import Signin from "./Signin";
 
 const UserAuthCheck = props => {
-  return (
-    <Query query={CURRENT_USER_QUERY}>
-      {(data, loading) => {
-        if (loading) return <div>Loading...</div>;
-        if (!data.data.me) {
-          return <Signin />;
-        }
-        return props.children;
-      }}
-    </Query>
-  );
+  const { data, loading } = useQuery(CURRENT_USER_QUERY);
+
+  if (loading) return <div>Loading...</div>;
+  if (!data.me) {
+    return <Signin />;
+  }
+  return props.children;
 };
 
 export default UserAuthCheck;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import gql from "graphql-tag";
-import { Mutation } from "react-apollo";
+import { useMutation } from '@apollo/react-hooks';
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus, faTrophy } from "@fortawesome/free-solid-svg-icons";
@@ -80,6 +80,11 @@ function NewGame() {
   const [cfoMilestone, setCfoMilestone] = useState(true);
   const [players, setPlayers] = useState([{ ...blankPlayer }]);
 
+  const [createGame, { error, loading, called, data }] = useMutation(
+    CREATE_GAME_MUTATION
+  );
+  console.log("object :", { error, loading, called, data });
+
   const addOrRemovePlayer = index => {
     if (index > players.length) {
       setPlayers([...players, { ...blankPlayer }]);
@@ -97,95 +102,95 @@ function NewGame() {
     setPlayers(newPlayers);
   };
 
-  const disableForm = players.filter(player => player.id).length < 2;
+  const disableForm = players.filter(player => player.id).length < 1;
 
   return (
     <UserAuthCheck>
-      <Mutation
-        mutation={CREATE_GAME_MUTATION}
-        variables={{ name, radioMilestone, cfoMilestone, players }}
-      >
-        {(createGame, { error, loading }) => (
-          <StyledForm
-            onSubmit={async e => {
-              e.preventDefault();
-              if (disableForm) return;
+      <StyledForm
+        onSubmit={async e => {
+          e.preventDefault();
+          if (disableForm) return;
 
-              await createGame();
-            }}
-          >
-            <StyledFieldset disabled={loading} aria-busy={loading}>
-              <Error error={error} />
-              <label htmlFor="name">Name:</label>
-              <InputWithIcon
-                id="name"
-                name="name"
-                placeholder="Game name"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                icon={faTrophy}
+          const res = await createGame({
+            variables: { name, radioMilestone, cfoMilestone, players }
+          });
+          if (res.data.createGame.id) {
+            console.log("created!!!");
+            // clear form
+            // redirect to... game page?
+          }
+        }}
+      >
+        <StyledFieldset disabled={loading} aria-busy={loading}>
+          <Error error={error} />
+          <label htmlFor="name">Name:</label>
+          <InputWithIcon
+            id="name"
+            name="name"
+            placeholder="Game name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            icon={faTrophy}
+          />
+          <HR />
+          <Checkbox
+            id="radioMilestone"
+            name="radioMilestone"
+            checked={radioMilestone}
+            onChange={() => setRadioMilestone(!radioMilestone)}
+            label="Radio Milestone"
+          />
+          <Checkbox
+            id="cfoMilestone"
+            name="cfoMilestone"
+            checked={cfoMilestone}
+            onChange={() => setCfoMilestone(!cfoMilestone)}
+            label="CFO Milestone"
+          />
+          <HR />
+          <div className="playerBar">
+            <div>Players:</div>
+            <Button
+              className="addPlayer"
+              type="button"
+              size="compact"
+              variant="openPrimary"
+              disabled={players.length >= 4}
+              onClick={() => {
+                if (players.length >= 4) return;
+                addOrRemovePlayer(players.length + 1);
+              }}
+            >
+              <FontAwesomeIcon icon={faUserPlus} />
+              <div className="pl">Add Player</div>
+            </Button>
+          </div>
+          {players.map((player, index) => {
+            return (
+              <PlayerSearch
+                key={`player-${index}`}
+                player={player}
+                handlePlayerUpdate={handlePlayerUpdate}
+                players={players}
+                showRemove={index >= 1}
+                handleRemovePlayer={addOrRemovePlayer}
+                index={index}
               />
-              <HR />
-              <Checkbox
-                id="radioMilestone"
-                name="radioMilestone"
-                checked={radioMilestone}
-                onChange={() => setRadioMilestone(!radioMilestone)}
-                label="Radio Milestone"
-              />
-              <Checkbox
-                id="cfoMilestone"
-                name="cfoMilestone"
-                checked={cfoMilestone}
-                onChange={() => setCfoMilestone(!cfoMilestone)}
-                label="CFO Milestone"
-              />
-              <HR />
-              <div className="playerBar">
-                <div>Players:</div>
-                <Button
-                  className="addPlayer"
-                  type="button"
-                  size="compact"
-                  variant="openPrimary"
-                  disabled={players.length >= 4}
-                  onClick={() => {
-                    if (players.length >= 4) return;
-                    addOrRemovePlayer(players.length + 1);
-                  }}
-                >
-                  <FontAwesomeIcon icon={faUserPlus} />
-                  <div className="pl">Add Player</div>
-                </Button>
-              </div>
-              {players.map((player, index) => {
-                return (
-                  <PlayerSearch
-                    key={`player-${index}`}
-                    player={player}
-                    handlePlayerUpdate={handlePlayerUpdate}
-                    players={players}
-                    showRemove={index >= 1}
-                    handleRemovePlayer={addOrRemovePlayer}
-                    index={index}
-                  />
-                );
-              })}
-              <HR />
-              <ActionBar>
-                <Button
-                  className="signPainter"
-                  type="submit"
-                  variant="primary"
-                  disabled={disableForm}
-                >
-                  Create Game
-                </Button>
-              </ActionBar>
-            </StyledFieldset>
-          </StyledForm>
-        )}
-      </Mutation>
+            );
+          })}
+          <HR />
+          <ActionBar>
+            <Button
+              className="signPainter"
+              type="submit"
+              variant="primary"
+              disabled={disableForm}
+            >
+              Create Game
+            </Button>
+          </ActionBar>
+        </StyledFieldset>
+      </StyledForm>
     </UserAuthCheck>
   );
 }

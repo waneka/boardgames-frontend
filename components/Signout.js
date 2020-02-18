@@ -1,5 +1,5 @@
 import React from "react";
-import { Mutation } from "react-apollo";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import { useRouter } from "next/router";
 import { CURRENT_USER_QUERY } from "./User";
@@ -14,27 +14,23 @@ const SIGN_OUT_MUTATION = gql`
 
 function Signout() {
   const router = useRouter();
+  const [signout, data] = useMutation(SIGN_OUT_MUTATION);
 
   return (
-    <Mutation
-      mutation={SIGN_OUT_MUTATION}
-      refetchQueries={[{ query: CURRENT_USER_QUERY }]}
-    >
-      {signout => (
-        <div
-          className="signout"
-          onClick={async () => {
-            const res = await signout();
+    <div
+      className="signout"
+      onClick={async () => {
+        const res = await signout({
+          refetchQueries: [{ query: CURRENT_USER_QUERY }]
+        });
 
-            if (res.data.signout.message) {
-              router.push("/signin");
-            }
-          }}
-        >
-          Sign Out
-        </div>
-      )}
-    </Mutation>
+        if (res.data.signout.message) {
+          router.push("/signin");
+        }
+      }}
+    >
+      Sign Out
+    </div>
   );
 }
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Mutation } from "react-apollo";
+import { useRouter } from "next/router";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 import Error from "./ErrorMessage";
@@ -115,86 +116,87 @@ const StyledForm = styled.form`
 `;
 
 function Signup({ setAuthFlow }) {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [signup, { error, loading }] = useMutation(SIGNUP_MUTATION);
 
   return (
-    <Mutation
-      mutation={SIGNUP_MUTATION}
-      variables={{ username, email, password }}
-      refetchQueries={[{ query: CURRENT_USER_QUERY }]}
-    >
-      {(signup, { error, loading }) => (
-        <StyledForm
-          method="post"
-          onSubmit={async e => {
-            e.preventDefault();
+    <StyledForm
+      method="post"
+      onSubmit={async e => {
+        e.preventDefault();
 
-            if (!username || !email || !password) return;
-            await signup();
-            setUsername("");
-            setEmail("");
-            setPassword("");
-          }}
-        >
-          <StyledFieldset disabled={loading} aria-busy={loading}>
-            <Error error={error} />
-            <div className="signupTitle">Sign up for an account</div>
-            <div className="inputWrapper">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder=""
-                className={email ? "hasContent" : ""}
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-              />
-              <label htmlFor="email">Email Address</label>
-            </div>
-            <div className="inputWrapper">
-              <input
-                type="text"
-                id="username"
-                name="username"
-                placeholder=""
-                className={username ? "hasContent" : ""}
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-              />
-              <label htmlFor="username">Username</label>
-            </div>
-            <div className="inputWrapper">
-              <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder=""
-                className={password ? "hasContent" : ""}
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-              <label htmlFor="password">Password</label>
-            </div>
-            <div className="buttonWrapper">
-              <button type="submit">Sign Up!</button>
-            </div>
-            <div className="horLine"></div>
-            <div className="signinToggle">
-              Already have an account?{" "}
-              <button
-                onClick={() => setAuthFlow("SIGNIN")}
-                className="link"
-                type="button"
-              >
-                Sign In
-              </button>
-            </div>
-          </StyledFieldset>
-        </StyledForm>
-      )}
-    </Mutation>
+        if (!username || !email || !password) return;
+        const res = await signup({
+          variables: { username, email, password },
+          refetchQueries: [{ query: CURRENT_USER_QUERY }]
+        });
+
+        setUsername("");
+        setEmail("");
+        setPassword("");
+        if (res.data.signup.id) {
+          router.push("/");
+        }
+      }}
+    >
+      <StyledFieldset disabled={loading} aria-busy={loading}>
+        <Error error={error} />
+        <div className="signupTitle">Sign up for an account</div>
+        <div className="inputWrapper">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder=""
+            className={email ? "hasContent" : ""}
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          <label htmlFor="email">Email Address</label>
+        </div>
+        <div className="inputWrapper">
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder=""
+            className={username ? "hasContent" : ""}
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+          />
+          <label htmlFor="username">Username</label>
+        </div>
+        <div className="inputWrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder=""
+            className={password ? "hasContent" : ""}
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
+          <label htmlFor="password">Password</label>
+        </div>
+        <div className="buttonWrapper">
+          <button type="submit">Sign Up!</button>
+        </div>
+        <div className="horLine"></div>
+        <div className="signinToggle">
+          Already have an account?{" "}
+          <button
+            onClick={() => setAuthFlow("SIGNIN")}
+            className="link"
+            type="button"
+          >
+            Sign In
+          </button>
+        </div>
+      </StyledFieldset>
+    </StyledForm>
   );
 }
 

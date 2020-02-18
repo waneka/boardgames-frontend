@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Mutation } from "react-apollo";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 import Error from "./ErrorMessage";
@@ -109,56 +110,55 @@ const StyledForm = styled.form`
 
 function RequestReset({ setAuthFlow }) {
   const [email, setEmail] = useState("");
+  const [reset, { error, loading, called }] = useMutation(
+    REQUEST_RESET_MUTATION
+  );
 
   return (
-    <Mutation mutation={REQUEST_RESET_MUTATION} variables={{ email }}>
-      {(reset, { error, loading, called }) => (
-        <StyledForm
-          method="post"
-          onSubmit={async e => {
-            e.preventDefault();
+    <StyledForm
+      method="post"
+      onSubmit={async e => {
+        e.preventDefault();
 
-            if (!email) return;
-            await reset();
-            setEmail("");
-          }}
-        >
-          <StyledFieldset disabled={loading} aria-busy={loading}>
-            <Error error={error} />
-            <div className="signupTitle">Request a password reset</div>
-            {!error && !loading && called && (
-              <div>Success! Check your email for a reset link.</div>
-            )}
-            <div className="inputWrapper">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder=""
-                className={email ? "hasContent" : ""}
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-              />
-              <label htmlFor="email">Email Address</label>
-            </div>
+        if (!email) return;
+        await reset({ variables: { email } });
+        setEmail("");
+      }}
+    >
+      <StyledFieldset disabled={loading} aria-busy={loading}>
+        <Error error={error} />
+        <div className="signupTitle">Request a password reset</div>
+        {!error && !loading && called && (
+          <div>Success! Check your email for a reset link.</div>
+        )}
+        <div className="inputWrapper">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder=""
+            className={email ? "hasContent" : ""}
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          <label htmlFor="email">Email Address</label>
+        </div>
 
-            <div className="buttonWrapper">
-              <button type="submit">Request Reset</button>
-            </div>
-            <div className="horLine"></div>
-            <div className="signinToggle">
-              <button
-                onClick={() => setAuthFlow("SIGNIN")}
-                className="link"
-                type="button"
-              >
-                Back to Sign In
-              </button>
-            </div>
-          </StyledFieldset>
-        </StyledForm>
-      )}
-    </Mutation>
+        <div className="buttonWrapper">
+          <button type="submit">Request Reset</button>
+        </div>
+        <div className="horLine"></div>
+        <div className="signinToggle">
+          <button
+            onClick={() => setAuthFlow("SIGNIN")}
+            className="link"
+            type="button"
+          >
+            Back to Sign In
+          </button>
+        </div>
+      </StyledFieldset>
+    </StyledForm>
   );
 }
 
